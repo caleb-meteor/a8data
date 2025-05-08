@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int|null $month
@@ -58,6 +58,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Usage whereView($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Usage withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Usage withoutTrashed()
+ * @property-read \App\Models\Agent|null $agent
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Team|null $team
  * @mixin \Eloquent
  */
 class Usage extends Model

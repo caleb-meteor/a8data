@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\UsageController;
@@ -20,4 +21,5 @@ Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('usages', UsageController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('finances', FinanceController::class)->only(['index', 'store', 'update', 'destroy']);
 });

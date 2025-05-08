@@ -60,5 +60,15 @@ return [
             ['title' => '消耗删除', 'type' => 'button', 'permission' => 'usages.destroy']
         ]
     ],
-
+    [
+        'title'      => '财务管理',
+        'type'       => 'route',
+        'permission' => 'finances',
+        'children'   => [
+            ['title' => '财务列表', 'type' => 'button', 'permission' => 'finances.index'],
+            ['title' => '财务添加', 'type' => 'button', 'permission' => 'finances.create'],
+            ['title' => '财务编辑', 'type' => 'button', 'permission' => 'finances.update'],
+            ['title' => '财务删除', 'type' => 'button', 'permission' => 'finances.destroy']
+        ]
+    ],
 ];

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->index();
             $table->string('username')->default('')->comment('用户昵称');
             $table->boolean('is_super')->default(false);
             $table->timestamp('email_verified_at')->nullable();
