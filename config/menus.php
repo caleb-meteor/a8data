@@ -38,5 +38,27 @@ return [
             ['title' => '产品删除', 'type' => 'button', 'permission' => 'products.destroy']
         ]
     ],
+    [
+        'title'      => '代理管理',
+        'type'       => 'route',
+        'permission' => 'agents',
+        'children'   => [
+            ['title' => '代理列表', 'type' => 'button', 'permission' => 'agents.index'],
+            ['title' => '代理添加', 'type' => 'button', 'permission' => 'agents.create'],
+            ['title' => '代理编辑', 'type' => 'button', 'permission' => 'agents.update'],
+            ['title' => '代理删除', 'type' => 'button', 'permission' => 'agents.destroy']
+        ]
+    ],
+    [
+        'title'      => '消耗管理',
+        'type'       => 'route',
+        'permission' => 'usages',
+        'children'   => [
+            ['title' => '消耗列表', 'type' => 'button', 'permission' => 'usages.index'],
+            ['title' => '消耗添加', 'type' => 'button', 'permission' => 'usages.create'],
+            ['title' => '消耗编辑', 'type' => 'button', 'permission' => 'usages.update'],
+            ['title' => '消耗删除', 'type' => 'button', 'permission' => 'usages.destroy']
+        ]
+    ],
 
 ];
