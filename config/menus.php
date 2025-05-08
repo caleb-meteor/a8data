@@ -27,5 +27,16 @@ return [
             ['title' => '团队删除', 'type' => 'button', 'permission' => 'teams.destroy']
         ]
     ],
+    [
+        'title'      => '产品管理',
+        'type'       => 'route',
+        'permission' => 'products',
+        'children'   => [
+            ['title' => '产品列表', 'type' => 'button', 'permission' => 'products.index'],
+            ['title' => '产品添加', 'type' => 'button', 'permission' => 'products.create'],
+            ['title' => '产品编辑', 'type' => 'button', 'permission' => 'products.update'],
+            ['title' => '产品删除', 'type' => 'button', 'permission' => 'products.destroy']
+        ]
+    ],
 
 ];
