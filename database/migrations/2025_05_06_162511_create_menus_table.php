@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100)->default('');
-            $table->string('type', 20)->default('');
+            $table->string('title')->default('');
+            $table->string('type')->default('');
             $table->string('meta')->nullable();
             $table->string('permission')->default('')->index('idx_permission');
             $table->unsignedBigInteger('sort')->default(0);

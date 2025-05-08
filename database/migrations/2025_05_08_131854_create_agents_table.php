@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->default('');
             $table->float('commission')->default(0);
             $table->string('remark')->default('');
             $table->string('media')->default('');

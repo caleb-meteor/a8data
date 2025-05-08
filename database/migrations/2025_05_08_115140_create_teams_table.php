@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->integer('department_id')->default(0);
-            $table->string('name', 50)->default('');
+            $table->string('name')->default('');
             $table->unsignedBigInteger('creator_id')->default(0);
             $table->string('remark')->default('');
             $table->timestamps();

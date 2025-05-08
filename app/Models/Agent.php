@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent withoutTrashed()
+ * @property-read \App\Models\User|null $creator
  * @mixin \Eloquent
  */
 class Agent extends Model
@@ -61,6 +62,6 @@ class Agent extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, 'creator_id')->withTrashed();
     }
 }
