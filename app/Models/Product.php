@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $name
@@ -34,6 +34,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withoutTrashed()
  * @property int $creator_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCreatorId($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read \App\Models\Team|null $team
  * @mixin \Eloquent
  */
 class Product extends Model

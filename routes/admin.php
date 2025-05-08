@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TeamController;
@@ -16,4 +17,5 @@ Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
     Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('teams', TeamController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
 });
