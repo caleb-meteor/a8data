@@ -55,6 +55,6 @@ class Team extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id')->where(fn($query) => $query->withTrashed());
+        return $this->belongsTo(User::class, 'creator_id')->withTrashed();
     }
 }
