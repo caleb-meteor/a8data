@@ -1,6 +1,6 @@
 <?php
 
-namespace Constants;
+namespace App\Constants;
 
 
 enum DepartmentEnum: int
@@ -33,6 +33,8 @@ enum DepartmentEnum: int
      */
     public static function fromName(string $name): int|null
     {
+        $name = strtoupper($name);
+
         return match ($name) {
             'A8自投' => self::SelfPlacement->value,
             'A8短信' => self::SMS->value,

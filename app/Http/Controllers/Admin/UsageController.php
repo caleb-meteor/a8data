@@ -33,7 +33,7 @@ class UsageController extends Controller
             'product_id'       => [$request->product_id ? 'exists:products,id' : 'integer'],
             'exclusive_agent'  => 'string',
             'channel'          => 'string',
-            'media'            => 'string',
+            'media'            => 'integer',
             'agent_id'         => [$request->agent_id ? 'exists:agents,id' : 'integer'],
             'placement_method' => 'string',
             'actual_usage'     => 'integer',
@@ -63,7 +63,7 @@ class UsageController extends Controller
             'product_id'       => [$request->product_id ? 'exists:products,id' : 'integer'],
             'exclusive_agent'  => 'string',
             'channel'          => 'string',
-            'media'            => 'string',
+            'media'            => 'integer',
             'agent_id'         => [$request->agent_id ? 'exists:agents,id' : 'integer'],
             'placement_method' => 'string',
             'actual_usage'     => 'integer',
@@ -87,5 +87,14 @@ class UsageController extends Controller
     {
         UsageService::instance()->deleteUsage($id);
         return $this->success();
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+        return $this->success([
+            'count' => UsageService::instance()->import($filePath)
+        ]);
     }
 }

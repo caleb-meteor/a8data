@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->default('');
             $table->decimal('commission', 8, 6)->default(0);
             $table->string('remark')->default('');
-            $table->string('media')->default('');
+            $table->integer('media')->default(0);
             $table->integer('creator_id')->default(0);
             $table->timestamps();
             $table->softDeletes();

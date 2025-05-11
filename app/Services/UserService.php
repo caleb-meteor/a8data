@@ -60,4 +60,9 @@ class UserService extends Service
         }
         return $user->delete();
     }
+
+    public function getUserByUsernames($usernames)
+    {
+        return User::query()->whereIn('username', $usernames)->get();
+    }
 }

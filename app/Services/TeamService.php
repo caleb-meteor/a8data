@@ -39,4 +39,9 @@ class TeamService extends Service
         $team = $this->getTeam($team);
         return $team->delete();
     }
+
+    public function getTeamByNames(array $names)
+    {
+        return Team::query()->whereIn('name', $names)->get();
+    }
 }

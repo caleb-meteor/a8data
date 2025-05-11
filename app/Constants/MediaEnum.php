@@ -1,6 +1,6 @@
 <?php
 
-namespace Constants;
+namespace App\Constants;
 
 enum MediaEnum: int
 {
@@ -35,12 +35,14 @@ enum MediaEnum: int
      */
     public static function fromName(string $name): int|null
     {
+        $name = strtolower($name);
+
         return match ($name) {
-            'FaceBook' => self::FaceBook->value,
+            'facebook' => self::FaceBook->value,
             '快手' => self::KuaiShou->value,
-            'TikTok' => self::TikTok->value,
+            'tiktok' => self::TikTok->value,
             '短信' => self::SMS->value,
-            'Google' => self::Google->value,
+            'google' => self::Google->value,
             '其他' => self::Other->value,
             default => null
         };

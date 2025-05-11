@@ -41,4 +41,9 @@ class ProductService extends Service
         $product = $this->getProduct($product);
         return $product->delete();
     }
+
+    public function getProductByNames(array $names)
+    {
+        return Product::query()->whereIn('name', $names)->get();
+    }
 }

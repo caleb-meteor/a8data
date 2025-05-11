@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->default(0)->index();
             $table->string('exclusive_agent')->default('')->comment('总代理');
             $table->string('channel')->default('');
-            $table->string('media')->default('');
+            $table->integer('media')->default(0);
             $table->unsignedBigInteger('agent_id')->default(0)->index();
             $table->string('placement_method')->default('')->comment('投放方式');
             $table->integer('actual_usage')->default(0)->comment('实际消耗');

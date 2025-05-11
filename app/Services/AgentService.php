@@ -41,4 +41,9 @@ class AgentService extends Service
         $agent = $this->getAgent($agent);
         return $agent->delete();
     }
+
+    public function getAgentByNames(array $names)
+    {
+        return Agent::query()->whereIn('name', $names)->get();
+    }
 }

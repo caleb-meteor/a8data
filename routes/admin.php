@@ -20,6 +20,10 @@ Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
     Route::resource('teams', TeamController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
+    // 消耗
     Route::resource('usages', UsageController::class)->only(['index', 'store', 'update', 'destroy']);
+    // 导入
+    Route::post('usages/import', [UsageController::class, 'import']);
+    // 财务
     Route::resource('finances', FinanceController::class)->only(['index', 'store', 'update', 'destroy']);
 });

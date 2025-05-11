@@ -26,9 +26,9 @@ class AgentController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'       => 'required|string|max:255|unique:agents',
-            'media'      => 'string|max:255',
-            'remark'     => 'string|max:255',
+            'name'       => 'required|string|unique:agents',
+            'media'      => 'integer',
+            'remark'     => 'string',
             'commission' => 'numeric|min:0|max:100'
         ]);
 
@@ -43,9 +43,9 @@ class AgentController extends Controller
     public function update(Request $request, int $id)
     {
         $data = $request->validate([
-            'name'       => ['required', 'string', 'max:255', Rule::unique('agents')->ignore($id)],
-            'media'      => 'string|max:255',
-            'remark'     => 'string|max:255',
+            'name'       => ['required', 'string', Rule::unique('agents')->ignore($id)],
+            'media'      => 'integer',
+            'remark'     => 'string',
             'commission' => 'numeric|min:0|max:100'
         ]);
         AgentService::instance()->updateAgent($id, $data);
