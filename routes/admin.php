@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
     // 消耗
     Route::resource('usages', UsageController::class)->only(['index', 'store', 'update', 'destroy']);
     // 导入
-    Route::post('usages/import', [UsageController::class, 'import']);
+    Route::post('usages/import', [UsageController::class, 'import'])->name('usages.import');
     // 财务
     Route::resource('finances', FinanceController::class)->only(['index', 'store', 'update', 'destroy']);
 });
