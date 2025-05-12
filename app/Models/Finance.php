@@ -94,6 +94,19 @@ class Finance extends Model
         'agent_id',
     ];
 
+    protected $casts = [
+        'date' => 'date',
+        'usd_loss_percent' => 'float',
+        'usd' => 'float',
+        'ustd' => 'float',
+        'commission' => 'float',
+        'balance' => 'float',
+        'counterparty_fee' => 'float',
+        'media_fee' => 'float',
+        'transaction_fee' => 'float',
+        'service_fee' => 'float',
+    ];
+
     public static function booted()
     {
         static::creating(function (Finance $usage) {
