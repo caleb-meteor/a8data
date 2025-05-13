@@ -4,16 +4,12 @@ namespace App\Services;
 
 use App\Constants\DepartmentEnum;
 use App\Constants\MediaEnum;
-use App\Models\Agent;
-use App\Models\Product;
-use App\Models\Team;
 use App\Models\Usage;
-use App\Models\User;
 use Caleb\Practice\Exceptions\PracticeAppException;
 use Caleb\Practice\QueryFilter;
 use Caleb\Practice\Service;
 use Carbon\Carbon;
-use Illuminate\Support\Benchmark;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 
 class UsageService extends Service
@@ -27,7 +23,7 @@ class UsageService extends Service
 
     /**
      * 统计使用数据的总和与平均值
-     * 
+     *
      * @param QueryFilter $filter
      * @return array 包含总和与平均值的数组
      */
@@ -38,26 +34,62 @@ class UsageService extends Service
             ->selectRaw('sum(actual_usage) as actual_usage, sum(view) as view, sum(click) as click, sum(install) as install, sum(send_num) as send_num')
             ->first();
         $diffDay = Carbon::create($date[0])->diffInDays($date[1]) + 1;
-        
+
         $sumData = $sum->toArray();
-        
+
         // 确保所有字段值不为 null，如果为 null 则设置为 0
         foreach ($sumData as $field => $value) {
             $sumData[$field] = $value ?? 0;
         }
-        
+
         $result = [
             'sum' => $sumData,
             'average' => []
         ];
-        
+
         // 计算平均值
         foreach ($sumData as $field => $value) {
             $averageValue = $diffDay > 0 ? $value / $diffDay : 0;
             $result['average'][$field] = round($averageValue, 2, PHP_ROUND_HALF_UP);
         }
-        
+
         return $result;
+    }
+
+    /**
+     * 按天统计各部门的 actual_usage
+     *
+     * @param array $dateRange
+     * @return array
+     */
+    public function getDailyUsage(array $dateRange)
+    {
+        $departmentIds = [DepartmentEnum::SelfPlacement->value, DepartmentEnum::SMS->value, DepartmentEnum::ProxyPlacement->value];
+        $startDate = Carbon::parse($dateRange[0]);
+        $endDate = Carbon::parse($dateRange[1]);
+
+        $carbonPeriod = CarbonPeriod::create($startDate, $endDate);
+
+        $existingData = Usage::query()
+            ->selectRaw('date, department_id, sum(actual_usage) as actual_usage')
+            ->whereBetween('date', $dateRange)
+            ->whereIn('department_id', $departmentIds)
+            ->groupBy('date', 'department_id')
+            ->get()
+            ->keyBy(function (Usage $item) {
+                return $item->date->toDateString() . '_' . $item->department_id;
+            });
+
+        $res = [];
+        foreach ($carbonPeriod as $date){
+            $date = $date->toDateString();
+            foreach ($departmentIds as $departmentId){
+                $key = $date. '_' . $departmentId;
+                $res[] = ['date' => $date, 'department_id' => $departmentId, 'actual_usage' => $existingData[$key]?->actual_usage ?? 0];
+            }
+        }
+
+        return $res;
     }
 
     public function createUsage(array $data)

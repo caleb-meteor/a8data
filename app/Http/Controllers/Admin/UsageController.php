@@ -13,7 +13,7 @@ class UsageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(UsageFilter $filter)
+    public function index(Request $request, UsageFilter $filter)
     {
         $request->validate([
             'date' => 'required|array',
@@ -21,7 +21,7 @@ class UsageController extends Controller
             'date.0' => 'required',
             'date.1' => 'required|after_or_equal:date.0',
         ]);
-        
+
         $statistic = UsageService::instance()->statistic($filter);
         $list = UsageService::instance()->getUsageList($filter)->toArray();
         $list['statistic'] = $statistic;
@@ -104,5 +104,17 @@ class UsageController extends Controller
         return $this->success([
             'count' => UsageService::instance()->import($filePath)
         ]);
+    }
+
+    public function getDailyUsage(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|array',
+            'date.*' => 'date_format:Y-m-d',
+            'date.0' => 'required',
+            'date.1' => 'required|after_or_equal:date.0',
+        ]);
+
+        return $this->success(UsageService::instance()->getDailyUsage($request->date));
     }
 }

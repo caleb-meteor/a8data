@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
     // 消耗
+    Route::get('usages/daily', [UsageController::class, 'getDailyUsage'])->name('usages.daily');
     Route::resource('usages', UsageController::class)->only(['index', 'store', 'update', 'destroy']);
     // 导入
     Route::post('usages/import', [UsageController::class, 'import'])->name('usages.import');

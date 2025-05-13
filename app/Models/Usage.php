@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Caleb\Practice\Standardization;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int|null $month
- * @property string|null $date
+ * @property Carbon|null $date
  * @property int $department_id
  * @property int $team_id
  * @property int $product_id
