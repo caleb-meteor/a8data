@@ -82,7 +82,16 @@ class FinanceService extends Service
 
         // 格式化入库数据
         list($agents, $products) = $this->formatData($agents, $products, $departments);
-        return $this->importDataToDB($rows, $agents, $products);
+        try {
+            return $this->importDataToDB($rows, $agents, $products);
+        } catch (\Exception $e) {
+            if ($e instanceof PracticeAppException) {
+                throw $e;
+            } else {
+                report($e);
+                $this->throwAppException('请检查csv文件是否为标准csv,保证数据格式正确,确定字母大小写,数字单元格不要出现字符串！');
+            }
+        }
     }
 
     /**
@@ -149,19 +158,19 @@ class FinanceService extends Service
 
         $sumData = $sum ? $sum->toArray() : [];
 
-         // 确保所有字段值不为 null，如果为 null 则设置为 0
+        // 确保所有字段值不为 null，如果为 null 则设置为 0
         foreach ($sumData as $field => $value) {
             $sumData[$field] = $value ?: 0;
         }
 
         $result = [
-            'sum' => $sumData,
+            'sum'     => $sumData,
             'average' => []
         ];
 
         // 计算平均值
         foreach ($sumData as $field => $value) {
-            $averageValue = $diffDay > 0 ? $value / $diffDay : 0;
+            $averageValue              = $diffDay > 0 ? $value / $diffDay : 0;
             $result['average'][$field] = round($averageValue, 6, PHP_ROUND_HALF_UP);
         }
 

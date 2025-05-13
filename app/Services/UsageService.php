@@ -154,7 +154,16 @@ class UsageService extends Service
         // 格式化入库数据
         list($agents, $products, $teams, $creators) = $this->formatData($agents, $products, $teams, $creators, $departments, $medias);
 
-        return $this->importDataToDB($rows, $agents, $products, $teams, $creators);
+        try {
+            return $this->importDataToDB($rows, $agents, $products, $teams, $creators);
+        } catch (\Exception $e) {
+            if ($e instanceof PracticeAppException) {
+                throw $e;
+            } else {
+                report($e);
+                $this->throwAppException('请检查csv文件是否标准,保证数据格式正确,确定字母大小写,数字单元格不要出现字符串！');
+            }
+        }
     }
 
     /**
