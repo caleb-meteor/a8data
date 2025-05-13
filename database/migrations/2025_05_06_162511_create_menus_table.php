@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100)->default('');
-            $table->string('type', 20)->default('');
+            $table->string('title')->default('');
+            $table->string('type')->default('');
             $table->string('meta')->nullable();
-            $table->string('permission')->default('')->index('idx_permission');
+            $table->string('permission')->default('')->index();
             $table->unsignedBigInteger('sort')->default(0);
-            $table->unsignedBigInteger('pid')->default(0)->index('idx_pid');
+            $table->unsignedBigInteger('pid')->default(0)->index();
             $table->timestamps();
         });
 
         Schema::create('user_menus', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->default(0)->index('idx_user_id');
+            $table->unsignedBigInteger('user_id')->default(0)->index();
             $table->unsignedBigInteger('menu_id')->default(0);
         });
     }

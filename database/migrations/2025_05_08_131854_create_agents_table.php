@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->integer('department_id')->default(0);
             $table->string('name')->default('');
-            $table->unsignedBigInteger('creator_id')->default(0);
+            $table->decimal('commission', 18, 6)->default(0);
             $table->string('remark')->default('');
+            $table->integer('media')->default(0);
+            $table->integer('creator_id')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('agents');
     }
 };
