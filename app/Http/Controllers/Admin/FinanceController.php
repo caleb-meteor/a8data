@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\FinanceFilter;
 use App\Http\Controllers\Controller;
 use App\Services\FinanceService;
+use App\Services\UsageService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -93,5 +94,24 @@ class FinanceController extends Controller
     {
         FinanceService::instance()->deleteFinance($id);
         return $this->success();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Caleb\Practice\Exceptions\PracticeAppException
+     * @author Caleb 2025/5/13
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file'
+        ]);
+
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+        return $this->success([
+            'count' => FinanceService::instance()->import($filePath)
+        ]);
     }
 }

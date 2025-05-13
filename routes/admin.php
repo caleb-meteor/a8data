@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('menus', [AuthController::class, 'menus']);
     Route::get('user', [AuthController::class, 'user'])->name('auth.users');
     Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -26,4 +26,5 @@ Route::middleware(['auth:sanctum', PermissionCheck::class])->group(function () {
     Route::post('usages/import', [UsageController::class, 'import'])->name('usages.import');
     // 财务
     Route::resource('finances', FinanceController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('finances/import', [FinanceController::class, 'import'])->name('finances.import');
 });

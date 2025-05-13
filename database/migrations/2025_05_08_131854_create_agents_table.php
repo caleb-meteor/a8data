@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
             $table->string('name')->default('');
-            $table->decimal('commission', 8, 6)->default(0);
+            $table->decimal('commission', 18, 6)->default(0);
             $table->string('remark')->default('');
             $table->integer('media')->default(0);
             $table->integer('creator_id')->default(0);

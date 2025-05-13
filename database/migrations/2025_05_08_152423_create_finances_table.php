@@ -23,10 +23,10 @@ return new class extends Migration
             $table->unsignedBigInteger('agent_id')->default(0)->index();
             $table->decimal('transaction_fee', 18, 6)->default(0)->comment('手续费');
             $table->decimal('service_fee', 18, 6)->default(0)->comment('服务费');
-            $table->decimal('usd_loss_percent', 8, 6)->default(0)->comment('U损');
+            $table->decimal('usd_loss_percent', 12, 6)->default(0)->comment('U损');
             $table->decimal('usd', 18, 6)->default(0);
             $table->decimal('ustd', 18, 6)->default(0);
-            $table->decimal('commission', 8, 6)->default(0)->comment('返点');
+            $table->decimal('commission', 18, 6)->default(0)->comment('返点');
             $table->string('purpose')->default('')->comment('用途');
             $table->string('description')->default('')->comment('费用明细');
             $table->string('account')->default('')->comment('账户信息');

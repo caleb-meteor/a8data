@@ -64,6 +64,7 @@ class UsageService extends Service
 
         $importer = new ImportService(maxRows: 20000, parseRow: function ($row) use (&$agents, &$products, &$teams, &$creators, &$departments, &$medias) {
             $row                  = array_slice($row, 1);
+            $row                  = array_map(fn($item) => trim($item), $row);
             $agents[$row[9]]      = 1;
             $products[$row[4]]    = 1;
             $teams[$row[3]]       = 1;
@@ -136,7 +137,7 @@ class UsageService extends Service
         return implode(',', [
             str_replace('月', '', $row[0]),
             $row[1],
-            DepartmentEnum::fromName($row[2]),
+            $row[2] ? DepartmentEnum::fromName($row[2]) : 0,
             $row[3] ? $teams[$row[3]] : 0,
             $row[4] ? $products[$row[4]] : 0,
             $row[5],
@@ -164,7 +165,7 @@ class UsageService extends Service
         return [
             'month'            => str_replace('月', '', $row[0]),
             'date'             => $row[1],
-            'department_id'    => DepartmentEnum::fromName($row[2]),
+            'department_id'    => $row[2] ? DepartmentEnum::fromName($row[2]) : 0,
             'team_id'          => $row[3] ? $teams[$row[3]] : 0,
             'product_id'       => $row[4] ? $products[$row[4]] : 0,
             'exclusive_agent'  => $row[5],
@@ -178,7 +179,7 @@ class UsageService extends Service
             'install'          => $row[13] ?: 0,
             'send_num'         => $row[14] ?: 0,
             'price'            => $row[15] ?: 0,
-            'remark'           => $row[16],
+            'unique_id'        => $row[16],
             'creator_id'       => $row[17] ? $creators[$row[17]] : (auth()?->user()?->id ?? 0),
             'created_at'       => $dateTime,
             'updated_at'       => $dateTime,
