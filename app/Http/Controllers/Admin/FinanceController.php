@@ -14,11 +14,19 @@ class FinanceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(FinanceFilter $filter)
+    public function index(Request $request, FinanceFilter $filter)
     {
-        return $this->success(
-            FinanceService::instance()->getFinanceList($filter)
-        );
+        $request->validate([
+            'date' => 'required|array',
+            'date.*' => 'date_format:Y-m-d',
+            'date.0' => 'required',
+            'date.1' => 'required|after_or_equal:date.0',
+        ]);
+
+        $statistic = FinanceService::instance()->statistic($filter);
+        $list = FinanceService::instance()->getFinanceList($filter)->toArray();
+        $list['statistic'] = $statistic;
+        return $this->success($list);
     }
 
     /**

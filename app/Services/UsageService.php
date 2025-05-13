@@ -12,6 +12,7 @@ use App\Models\User;
 use Caleb\Practice\Exceptions\PracticeAppException;
 use Caleb\Practice\QueryFilter;
 use Caleb\Practice\Service;
+use Carbon\Carbon;
 use Illuminate\Support\Benchmark;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,41 @@ class UsageService extends Service
         return Usage::filter($filter)
             ->with('creator', 'team', 'product', 'agent')
             ->orderByDesc('id')->paginate();
+    }
+
+    /**
+     * 统计使用数据的总和与平均值
+     * 
+     * @param QueryFilter $filter
+     * @return array 包含总和与平均值的数组
+     */
+    public function statistic(QueryFilter $filter)
+    {
+        $date = $filter->getFilters()['date'];
+        $sum = Usage::filter($filter)
+            ->selectRaw('sum(actual_usage) as actual_usage, sum(view) as view, sum(click) as click, sum(install) as install, sum(send_num) as send_num')
+            ->first();
+        $diffDay = Carbon::create($date[0])->diffInDays($date[1]) + 1;
+        
+        $sumData = $sum->toArray();
+        
+        // 确保所有字段值不为 null，如果为 null 则设置为 0
+        foreach ($sumData as $field => $value) {
+            $sumData[$field] = $value ?? 0;
+        }
+        
+        $result = [
+            'sum' => $sumData,
+            'average' => []
+        ];
+        
+        // 计算平均值
+        foreach ($sumData as $field => $value) {
+            $averageValue = $diffDay > 0 ? $value / $diffDay : 0;
+            $result['average'][$field] = round($averageValue, 2, PHP_ROUND_HALF_UP);
+        }
+        
+        return $result;
     }
 
     public function createUsage(array $data)

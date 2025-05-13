@@ -6,6 +6,7 @@ use App\Constants\DepartmentEnum;
 use App\Models\Agent;
 use App\Models\Finance;
 use App\Models\Product;
+use Carbon\Carbon;
 use Caleb\Practice\Exceptions\PracticeAppException;
 use Caleb\Practice\QueryFilter;
 use Caleb\Practice\Service;
@@ -129,6 +130,42 @@ class FinanceService extends Service
             DB::commit();
             return $total;
         }
+    }
+
+    /**
+     * 统计财务数据的总和与平均值
+     *
+     * @param QueryFilter $filter
+     * @return array 包含总和与平均值的数组
+     */
+    public function statistic(QueryFilter $filter)
+    {
+        $date = $filter->getFilters()['date'];
+
+        $sum = Finance::filter($filter)->selectRaw('sum(counterparty_fee) as counterparty_fee, sum(media_fee) as media_fee, sum(transaction_fee) as transaction_fee,sum(service_fee) as service_fee,sum(usd) as usd,sum(ustd) as ustd')->first();
+
+        $diffDay = Carbon::create($date[0])->diffInDays($date[1]) + 1;
+
+
+        $sumData = $sum ? $sum->toArray() : [];
+
+         // 确保所有字段值不为 null，如果为 null 则设置为 0
+        foreach ($sumData as $field => $value) {
+            $sumData[$field] = $value ?: 0;
+        }
+
+        $result = [
+            'sum' => $sumData,
+            'average' => []
+        ];
+
+        // 计算平均值
+        foreach ($sumData as $field => $value) {
+            $averageValue = $diffDay > 0 ? $value / $diffDay : 0;
+            $result['average'][$field] = round($averageValue, 6, PHP_ROUND_HALF_UP);
+        }
+
+        return $result;
     }
 
     public function formatRowsForPgsql($row, $agents, $products, $dateTime)

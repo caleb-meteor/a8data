@@ -15,9 +15,17 @@ class UsageController extends Controller
      */
     public function index(UsageFilter $filter)
     {
-        return $this->success(
-            UsageService::instance()->getUsageList($filter)
-        );
+        $request->validate([
+            'date' => 'required|array',
+            'date.*' => 'date_format:Y-m-d',
+            'date.0' => 'required',
+            'date.1' => 'required|after_or_equal:date.0',
+        ]);
+        
+        $statistic = UsageService::instance()->statistic($filter);
+        $list = UsageService::instance()->getUsageList($filter)->toArray();
+        $list['statistic'] = $statistic;
+        return $this->success($list);
     }
 
     /**
