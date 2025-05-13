@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Caleb\Practice\Standardization;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int|null $month
- * @property string|null $date
+ * @property Carbon|null $date
  * @property int $department_id
  * @property string $counterparty_fee 第三方费用
  * @property string $media_fee 媒体费
@@ -95,7 +96,6 @@ class Finance extends Model
     ];
 
     protected $casts = [
-        'date' => 'date',
         'usd_loss_percent' => 'float',
         'usd' => 'float',
         'ustd' => 'float',

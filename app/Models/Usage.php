@@ -90,7 +90,6 @@ class Usage extends Model
     ];
 
     protected $casts = [
-        'date' => 'date',
         'price' => 'float'
     ];
 
