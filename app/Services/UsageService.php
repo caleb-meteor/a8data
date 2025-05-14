@@ -77,7 +77,7 @@ class UsageService extends Service
             ->groupBy('date', 'department_id')
             ->get()
             ->keyBy(function (Usage $item) {
-                return $item->date->toDateString() . '_' . $item->department_id;
+                return $item->date . '_' . $item->department_id;
             });
 
         $res = [];
