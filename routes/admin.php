@@ -14,9 +14,14 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('auth/bind2fa', [AuthController::class, 'bind2fa']);
+
     Route::get('menus', [AuthController::class, 'menus']);
     Route::get('user', [AuthController::class, 'user'])->name('auth.users');
+
     Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::put('users/{id}/unbind2fa', [UserController::class, 'unbind2fa']);
+
     Route::resource('teams', TeamController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);

@@ -62,4 +62,22 @@ class UserController extends Controller
         UserService::instance()->deleteUser($id);
         return $this->success();
     }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     * @author Caleb 2025/5/15
+     */
+    public function unbind2fa(Request $request, int $id)
+    {
+        $user = $request->user();
+        if (!$user->is_super) {
+            return  $this->error('权限不足');
+        }
+
+        UserService::instance()->unbind2fa($id);
+
+        return $this->success();
+    }
 }

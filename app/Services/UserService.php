@@ -65,4 +65,21 @@ class UserService extends Service
     {
         return User::query()->whereIn('username', $usernames)->get();
     }
+
+    /**
+     * @param int|User $user
+     * @return bool
+     * @author Caleb 2025/5/15
+     */
+    public function unbind2fa(int|User $user)
+    {
+        $user = $this->getUser($user);
+        if($user->is_2fa_enabled){
+            $user->google2fa_secret = null;
+            $user->is_2fa_enabled = false;
+            return  $user->save();
+        }else{
+            return true;
+        }
+    }
 }

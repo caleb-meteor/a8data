@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('username')->default('')->comment('用户昵称');
             $table->boolean('is_super')->default(false);
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('google2fa_secret')->nullable();
+            $table->boolean('is_2fa_enabled')->default(false);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

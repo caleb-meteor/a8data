@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -47,6 +47,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
+ * @property string|null $google2fa_secret
+ * @property bool $is_2fa_enabled
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGoogle2faSecret($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIs2faEnabled($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -64,6 +68,8 @@ class User extends Authenticatable
         'is_super',
         'username',
         'password',
+        'google2fa_secret',
+        'is_2fa_enabled',
     ];
 
     /**
