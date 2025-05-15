@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             'name'     => 'a8data',
             'username' => 'admin',
             'is_super' => true,
-            'password' => 'a8data@2025',
+            'password' => env('ADMIN_PASSWORD'),
         ]);
 
         $this->command->call('app:init-menu');
