@@ -16,14 +16,14 @@ class UsageController extends Controller
     public function index(Request $request, UsageFilter $filter)
     {
         $request->validate([
-            'date' => 'required|array',
+            'date'   => 'required|array',
             'date.*' => 'date_format:Y-m-d',
             'date.0' => 'required',
             'date.1' => 'required|after_or_equal:date.0',
         ]);
 
-        $statistic = UsageService::instance()->statistic($filter);
-        $list = UsageService::instance()->getUsageList($filter)->toArray();
+        $statistic         = UsageService::instance()->statistic($filter);
+        $list              = UsageService::instance()->getUsageList($filter)->toArray();
         $list['statistic'] = $statistic;
         return $this->success($list);
     }
@@ -99,7 +99,7 @@ class UsageController extends Controller
 
     public function import(Request $request)
     {
-        $file = $request->file('file');
+        $file     = $request->file('file');
         $filePath = $file->getRealPath();
         return $this->success([
             'count' => UsageService::instance()->import($filePath)
@@ -109,12 +109,18 @@ class UsageController extends Controller
     public function getDailyUsage(Request $request)
     {
         $request->validate([
-            'date' => 'required|array',
-            'date.*' => 'date_format:Y-m-d',
-            'date.0' => 'required',
-            'date.1' => 'required|after_or_equal:date.0',
+            'date'     => 'required|array',
+            'date.*'   => 'date_format:Y-m-d',
+            'date.0'   => 'required',
+            'date.1'   => 'required|after_or_equal:date.0',
+            'group_by' => 'string|in:department,team'
         ]);
 
-        return $this->success(UsageService::instance()->getDailyUsage($request->date));
+        $groupBy = [
+            'department' => 'department_id',
+            'team'       => 'team_id'
+        ][$request->input('group_by', 'department')];
+
+        return $this->success(UsageService::instance()->getDailyUsage($request->date, $groupBy));
     }
 }

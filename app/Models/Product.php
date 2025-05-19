@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
- * @property int $team_id
  * @property bool $status
  * @property string $remark
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -36,6 +35,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCreatorId($value)
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\Team|null $team
+ * @property string $tech_team
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereTechTeam($value)
  * @mixin \Eloquent
  */
 class Product extends Model
@@ -44,7 +45,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'team_id',
+        'tech_team',
         'status',
         'remark',
         'creator_id',
@@ -55,11 +56,6 @@ class Product extends Model
         static::creating(function (Product $product) {
             $product->creator_id = auth()->id();
         });
-    }
-
-    public function team()
-    {
-        return $this->belongsTo(Team::class)->withTrashed();
     }
 
     public function creator()

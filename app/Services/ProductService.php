@@ -11,7 +11,7 @@ class ProductService extends Service
     public function getProductList(QueryFilter $filter)
     {
         return Product::filter($filter)
-            ->with('creator', 'team')
+            ->with('creator')
             ->orderByDesc('id')->paginate();
     }
 

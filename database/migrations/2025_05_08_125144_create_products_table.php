@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name')->default('');
-            $table->unsignedBigInteger('team_id')->default(0);
+            $table->string('tech_team')->default('');
             $table->boolean('status')->default(true);
             $table->string('remark')->default('');
             $table->unsignedBigInteger('creator_id')->default(0);

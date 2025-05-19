@@ -26,10 +26,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'    => 'required|string|max:255|unique:products',
-            'team_id' => 'required|integer|exists:teams,id',
-            'remark'  => 'string|max:255',
-            'status'  => 'required|boolean'
+            'name'      => 'required|string|max:255|unique:products',
+            'tech_team' => 'string',
+            'remark'    => 'string|max:255',
+            'status'    => 'required|boolean'
         ]);
 
         return $this->success(
@@ -44,7 +44,7 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name'    => ['required', 'string', 'max:255', Rule::unique('products')->ignore($id)],
-            'team_id' => 'required|integer|exists:teams,id',
+            'tech_team' => 'string',
             'status'  => 'required|boolean',
             'remark'  => 'string|max:255',
         ]);

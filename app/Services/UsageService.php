@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\DepartmentEnum;
 use App\Constants\MediaEnum;
+use App\Models\Team;
 use App\Models\Usage;
 use Caleb\Practice\Exceptions\PracticeAppException;
 use Caleb\Practice\QueryFilter;
@@ -29,8 +30,8 @@ class UsageService extends Service
      */
     public function statistic(QueryFilter $filter)
     {
-        $date = $filter->getFilters()['date'];
-        $sum = Usage::filter($filter)
+        $date    = $filter->getFilters()['date'];
+        $sum     = Usage::filter($filter)
             ->selectRaw('sum(actual_usage) as actual_usage, sum(view) as view, sum(click) as click, sum(install) as install, sum(send_num) as send_num')
             ->first();
         $diffDay = Carbon::create($date[0])->diffInDays($date[1]) + 1;
@@ -43,13 +44,13 @@ class UsageService extends Service
         }
 
         $result = [
-            'sum' => $sumData,
+            'sum'     => $sumData,
             'average' => []
         ];
 
         // 计算平均值
         foreach ($sumData as $field => $value) {
-            $averageValue = $diffDay > 0 ? $value / $diffDay : 0;
+            $averageValue              = $diffDay > 0 ? $value / $diffDay : 0;
             $result['average'][$field] = round($averageValue, 2, PHP_ROUND_HALF_UP);
         }
 
@@ -60,32 +61,44 @@ class UsageService extends Service
      * 按天统计各部门的 actual_usage
      *
      * @param array $dateRange
+     * @param string $groupBy
      * @return array
      */
-    public function getDailyUsage(array $dateRange)
+    public function getDailyUsage(array $dateRange, string $groupBy = 'department_id')
     {
-        $departmentIds = [DepartmentEnum::SelfPlacement->value, DepartmentEnum::SMS->value, DepartmentEnum::ProxyPlacement->value];
+        $teams = [];
+        if ($groupBy == 'department_id') {
+            $groupIds = [DepartmentEnum::SelfPlacement->value, DepartmentEnum::SMS->value, DepartmentEnum::ProxyPlacement->value];
+        } else {
+            $teams    = Team::query()->pluck('name', 'id')->toArray();
+            $groupIds = array_keys($teams);
+        }
+
         $startDate = Carbon::parse($dateRange[0]);
-        $endDate = Carbon::parse($dateRange[1]);
+        $endDate   = Carbon::parse($dateRange[1]);
 
         $carbonPeriod = CarbonPeriod::create($startDate, $endDate);
 
         $existingData = Usage::query()
-            ->selectRaw('date, department_id, sum(actual_usage) as actual_usage')
+            ->selectRaw('date, ' . $groupBy . ', sum(actual_usage) as actual_usage')
             ->whereBetween('date', $dateRange)
-            ->whereIn('department_id', $departmentIds)
-            ->groupBy('date', 'department_id')
+            ->whereIn($groupBy, $groupIds)
+            ->groupBy('date', $groupBy)
             ->get()
             ->keyBy(function (Usage $item) {
-                return $item->date . '_' . $item->department_id;
+                return $item->date . '_' . $item->{$groupBy};
             });
 
         $res = [];
-        foreach ($carbonPeriod as $date){
+        foreach ($carbonPeriod as $date) {
             $date = $date->toDateString();
-            foreach ($departmentIds as $departmentId){
-                $key = $date. '_' . $departmentId;
-                $res[] = ['date' => $date, 'department_id' => $departmentId, 'actual_usage' => $existingData[$key]?->actual_usage ?? 0];
+            foreach ($groupIds as $groupId) {
+                $key   = $date . '_' . $groupId;
+                $res[] = array_merge([
+                    'date'         => $date,
+                    $groupBy       => $groupId,
+                    'actual_usage' => $existingData[$key]?->actual_usage ?? 0
+                ], $groupBy == 'team_id' ? ['name' => $teams[$groupId] ?? ''] : []);
             }
         }
 
