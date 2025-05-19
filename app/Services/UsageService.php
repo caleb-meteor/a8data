@@ -70,7 +70,7 @@ class UsageService extends Service
         if ($groupBy == 'department_id') {
             $groupIds = [DepartmentEnum::SelfPlacement->value, DepartmentEnum::SMS->value, DepartmentEnum::ProxyPlacement->value];
         } else {
-            $teams    = Team::query()->pluck('name', 'id')->toArray();
+            $teams    = Team::query()->whereIn('id', range(1, 8))->pluck('name', 'id')->toArray();
             $groupIds = array_keys($teams);
         }
 
