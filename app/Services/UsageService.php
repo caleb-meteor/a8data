@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\DepartmentEnum;
 use App\Constants\MediaEnum;
+use App\Models\Finance;
 use App\Models\Team;
 use App\Models\Usage;
 use Caleb\Practice\Exceptions\PracticeAppException;
@@ -195,8 +196,15 @@ class UsageService extends Service
             $data   = [];
             $fields = ['month', 'date', 'department_id', 'team_id', 'product_id', 'exclusive_agent', 'channel', 'media', 'placement_method', 'agent_id', 'actual_usage', 'view', 'click', 'install', 'send_num', 'price', 'unique_id', 'creator_id', 'created_at', 'updated_at'];
             foreach ($rows as $insertRow) {
-                if ($insertRow[0]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $teams, $creators, $dateTime);
+                if ($insertRow[1]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $teams, $creators, $dateTime);
             }
+            // try {
+            //     foreach (array_chunk($data, 20) as $datum){
+            //         $datum && $pdo->pgsqlCopyFromArray((new Usage())->getTable(), $datum, ',', fields: implode(',', $fields));
+            //     }
+            // }catch (\Exception $e){
+            //     dd($datum, $e->getMessage());
+            // }
             // $execTime = Benchmark::measure(fn() => $data && $pdo->pgsqlCopyFromArray((new Usage())->getTable(), $data, ',',fields: implode(',', $fields)));
             $data && $pdo->pgsqlCopyFromArray((new Usage())->getTable(), $data, ',', fields: implode(',', $fields));
             return count($data);
@@ -222,29 +230,7 @@ class UsageService extends Service
 
     public function formatRowsForPgsql($row, $agents, $products, $teams, $creators, $dateTime)
     {
-        $row = array_pad($row, 18, '');
-        return implode(',', [
-            str_replace('月', '', $row[0]),
-            $row[1],
-            $row[2] ? DepartmentEnum::fromName($row[2]) : 0,
-            $row[3] ? $teams[$row[3]] : 0,
-            $row[4] ? $products[$row[4]] : 0,
-            $row[5],
-            $row[6],
-            $row[7] ? MediaEnum::fromName($row[7]) : 0,
-            $row[8],
-            $agents[$row[9]],
-            $row[10] ?: 0,
-            $row[11] ?: 0,
-            $row[12] ?: 0,
-            $row[13] ?: 0,
-            $row[14] ?: 0,
-            $row[15] ?: 0,
-            $row[16],
-            $row[17] ? $creators[$row[17]] : (auth()?->user()?->id ?? 0),
-            $dateTime,
-            $dateTime,
-        ]);
+        return implode(',', $this->formatRows($row, $agents, $products, $teams, $creators, $dateTime));
     }
 
     public function formatRows($row, $agents, $products, $teams, $creators, $dateTime)
@@ -252,7 +238,7 @@ class UsageService extends Service
         // 长度不足则补齐
         $row = array_pad($row, 18, '');
         return [
-            'month'            => str_replace('月', '', $row[0]),
+            'month'            => str_replace('月', '', $row[0]) ?: Carbon::parse($row[1])->month,
             'date'             => $row[1],
             'department_id'    => $row[2] ? DepartmentEnum::fromName($row[2]) : 0,
             'team_id'          => $row[3] ? $teams[$row[3]] : 0,
@@ -262,12 +248,12 @@ class UsageService extends Service
             'media'            => $row[7] ? MediaEnum::fromName($row[7]) : 0,
             'placement_method' => $row[8],
             'agent_id'         => $agents[$row[9]],
-            'actual_usage'     => $row[10] ?: 0,
-            'view'             => $row[11] ?: 0,
-            'click'            => $row[12] ?: 0,
-            'install'          => $row[13] ?: 0,
-            'send_num'         => $row[14] ?: 0,
-            'price'            => $row[15] ?: 0,
+            'actual_usage'     => parse_number($row[10] ?: 0),
+            'view'             => parse_number($row[11] ?: 0),
+            'click'            => parse_number($row[12] ?: 0),
+            'install'          => parse_number($row[13] ?: 0),
+            'send_num'         => parse_number($row[14] ?: 0),
+            'price'            => parse_number($row[15] ?: 0),
             'unique_id'        => $row[16],
             'creator_id'       => $row[17] ? $creators[$row[17]] : (auth()?->user()?->id ?? 0),
             'created_at'       => $dateTime,

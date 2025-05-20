@@ -117,9 +117,17 @@ class FinanceService extends Service
                 'product_id', 'balance', 'creator_id', 'created_at', 'updated_at',
             ];
             foreach ($rows as $insertRow) {
-                if ($insertRow[0]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $dateTime);
+                if ($insertRow[1]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $dateTime);
             }
-            $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data, fields: implode(',', $fields));
+            // try {
+            //     foreach (array_chunk($data, 20) as $datum) {
+            //         $datum && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $datum, separator: ',', fields: implode(',', $fields));
+            //     }
+            // } catch (\Exception $e) {
+            //     dd($datum, $e->getMessage());
+            // }
+
+            $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data,  separator: ',', fields: implode(',', $fields));
             return count($data);
         } else {
             $total = 0;
@@ -179,50 +187,24 @@ class FinanceService extends Service
 
     public function formatRowsForPgsql($row, $agents, $products, $dateTime)
     {
-        $row = array_pad($row, 18, '');
-
-        return str_replace(["\r\n", "\n", "\r"], '', implode("\t",
-            [
-                str_replace('月', '', $row[0]),
-                $row[1],
-                $row[2] ?: 0,
-                $row[3] ?: 0,
-                $row[4] ?: 0,
-                $row[5] ?: 0,
-                $row[6] ?: 0,
-                $row[7] ?: 0,
-                $row[8] ?: 0,
-                $row[9] ?: 0,
-                $row[10],
-                $row[11] ? $agents[$row[11]] : 0,
-                $row[12],
-                $row[13],
-                DepartmentEnum::fromName($row[14]) ?: 0,
-                $row[15],
-                $row[16],
-                $row[17] ? $products[$row[17]] : 0,
-                $row[18] ?: 0,
-                auth()?->user()?->id ?? 0,
-                $dateTime,
-                $dateTime,
-            ]));
+        return implode(',', $this->formatRows($row, $agents, $products, $dateTime));
     }
 
     public function formatRows($row, $agents, $products, $dateTime)
     {
         // 长度不足则补齐
-        $row = array_pad($row, 19, '');
+        $row = array_pad($row, 18, '');
         return [
-            'month'            => str_replace('月', '', $row[0]),
+            'month'            => str_replace('月', '', $row[0]) ?: Carbon::parse($row[1])->month,
             'date'             => $row[1],
-            'counterparty_fee' => $row[2] ?: 0,
-            'media_fee'        => $row[3] ?: 0,
-            'transaction_fee'  => $row[4] ?: 0,
-            'service_fee'      => $row[5] ?: 0,
-            'usd_loss_percent' => $row[6] ?: 0,
-            'usd'              => $row[7] ?: 0,
-            'ustd'             => $row[8] ?: 0,
-            'commission'       => $row[9] ?: 0,
+            'counterparty_fee' => parse_number($row[2] ?: 0),
+            'media_fee'        => parse_number($row[3] ?: 0),
+            'transaction_fee'  => parse_number($row[4] ?: 0),
+            'service_fee'      => parse_number($row[5] ?: 0),
+            'usd_loss_percent' => parse_number($row[6] ?: 0),
+            'usd'              => parse_number($row[7] ?: 0),
+            'ustd'             => parse_number($row[8] ?: 0),
+            'commission'       => parse_number($row[9] ?: 0),
             'purpose'          => $row[10],
             'agent_id'         => $row[11] ? $agents[$row[11]] : 0,
             'description'      => $row[12],
@@ -231,7 +213,7 @@ class FinanceService extends Service
             'handler'          => $row[15],
             'remark'           => $row[16],
             'product_id'       => $row[17] ? $products[$row[17]] : 0,
-            'balance'          => $row[18],
+            'balance'          => parse_number($row[18] ?: 0),
             'creator_id'       => auth()?->user()?->id ?? 0,
             'created_at'       => $dateTime,
             'updated_at'       => $dateTime,
