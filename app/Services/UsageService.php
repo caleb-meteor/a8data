@@ -86,9 +86,7 @@ class UsageService extends Service
             ->whereIn($groupBy, $groupIds)
             ->groupBy('date', $groupBy)
             ->get()
-            ->keyBy(function (Usage $item) {
-                return $item->date . '_' . $item->{$groupBy};
-            });
+            ->keyBy(fn(Usage $item) => $item->date . '_' . $item->{$groupBy});
 
         $res = [];
         foreach ($carbonPeriod as $date) {
@@ -156,7 +154,7 @@ class UsageService extends Service
             return $row;
         });
 
-        $rows = $importer->getRows($filePath);
+        $rows        = $importer->getRows($filePath);
         $agents      = array_filter(array_keys($agents));
         $products    = array_filter(array_keys($products));
         $teams       = array_filter(array_keys($teams));
