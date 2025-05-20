@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -39,7 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Agent extends Model
 {
-    use Standardization, SoftDeletes;
+    use Standardization;
 
     protected $fillable = [
         'name',
