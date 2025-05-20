@@ -23,3 +23,15 @@ if (!function_exists('format_tree')) {
         return $tree;
     }
 }
+
+if (!function_exists('parse_number')) {
+    /**
+     * @param string $number
+     * @return array|string|string[]
+     * @author Caleb 2025/5/20
+     */
+    function parse_number(string $number)
+    {
+        return str_replace(',', '', $number);
+    }
+}
