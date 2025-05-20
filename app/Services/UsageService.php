@@ -156,7 +156,6 @@ class UsageService extends Service
         });
 
         $rows = $importer->getRows($filePath);
-
         $agents      = array_filter(array_keys($agents));
         $products    = array_filter(array_keys($products));
         $teams       = array_filter(array_keys($teams));

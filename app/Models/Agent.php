@@ -39,7 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Agent extends Model
 {
-    use Standardization;
+    use Standardization, SoftDeletes;
 
     protected $fillable = [
         'name',
