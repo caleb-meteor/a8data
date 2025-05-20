@@ -193,7 +193,7 @@ class FinanceService extends Service
     public function formatRows($row, $agents, $products, $dateTime)
     {
         // 长度不足则补齐
-        $row = array_pad($row, 18, '');
+        $row = array_pad($row, 19, '');
         return [
             'month'            => str_replace('月', '', $row[0]) ?: Carbon::parse($row[1])->month,
             'date'             => $row[1],
