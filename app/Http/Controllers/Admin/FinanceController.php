@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\FinanceExport;
 use App\Filters\FinanceFilter;
 use App\Http\Controllers\Controller;
 use App\Services\FinanceService;
 use App\Services\UsageService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FinanceController extends Controller
 {
@@ -17,14 +19,14 @@ class FinanceController extends Controller
     public function index(Request $request, FinanceFilter $filter)
     {
         $request->validate([
-            'date' => 'required|array',
+            'date'   => 'required|array',
             'date.*' => 'date_format:Y-m-d',
             'date.0' => 'required',
             'date.1' => 'required|after_or_equal:date.0',
         ]);
 
-        $statistic = FinanceService::instance()->statistic($filter);
-        $list = FinanceService::instance()->getFinanceList($filter)->toArray();
+        $statistic         = FinanceService::instance()->statistic($filter);
+        $list              = FinanceService::instance()->getFinanceList($filter)->toArray();
         $list['statistic'] = $statistic;
         return $this->success($list);
     }
@@ -121,5 +123,10 @@ class FinanceController extends Controller
         return $this->success([
             'count' => FinanceService::instance()->import($file)
         ]);
+    }
+
+    public function export(FinanceFilter $filter)
+    {
+        return Excel::download(new FinanceExport($filter), 'finances_' . date('Y_m_d_H_i') . '.xlsx');
     }
 }

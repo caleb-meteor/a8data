@@ -27,10 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
     // 消耗
     Route::get('usages/daily', [UsageController::class, 'getDailyUsage'])->name('usages.daily');
+    Route::get('usages/export', [UsageController::class, 'export']);
     Route::resource('usages', UsageController::class)->only(['index', 'store', 'update', 'destroy']);
     // 导入
     Route::post('usages/import', [UsageController::class, 'import'])->name('usages.import');
     // 财务
     Route::resource('finances', FinanceController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('finances/import', [FinanceController::class, 'import'])->name('finances.import');
+    Route::get('finances/export', [FinanceController::class, 'export']);
 });

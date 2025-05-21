@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UsageExport;
 use App\Filters\UsageFilter;
 use App\Http\Controllers\Controller;
 use App\Services\UsageService;
+use Caleb\Practice\QueryFilter;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsageController extends Controller
 {
@@ -122,5 +125,10 @@ class UsageController extends Controller
         ][$request->input('group_by', 'department')];
 
         return $this->success(UsageService::instance()->getDailyUsage($request->date, $groupBy));
+    }
+
+    public function export(UsageFilter $filter)
+    {
+        return Excel::download(new UsageExport($filter), 'usages_' . date('Y_m_d_H_i') . '.xlsx');
     }
 }
