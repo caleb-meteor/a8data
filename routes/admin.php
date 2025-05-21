@@ -26,7 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('teams/export', [TeamController::class, 'export']);
 
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
+
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('agents/export', [AgentController::class, 'export']);
     // 消耗
     Route::get('usages/daily', [UsageController::class, 'getDailyUsage'])->name('usages.daily');
     Route::get('usages/export', [UsageController::class, 'export']);

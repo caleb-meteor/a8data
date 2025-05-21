@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AgentExport;
 use App\Filters\AgentFilter;
 use App\Http\Controllers\Controller;
 use App\Services\AgentService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AgentController extends Controller
 {
@@ -59,5 +61,10 @@ class AgentController extends Controller
     {
         AgentService::instance()->deleteAgent($id);
         return $this->success();
+    }
+
+    public function export(AgentFilter $filter)
+    {
+        return Excel::download(new AgentExport($filter), 'agents_' . date('Y_m_d_H_i') . '.xlsx');
     }
 }
