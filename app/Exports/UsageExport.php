@@ -21,7 +21,7 @@ class UsageExport implements FromCollection, WithMapping, WithHeadings
      */
     public function collection()
     {
-        return Usage::filter($this->filter)->with('team', 'agent', 'creator', 'product')->get();
+        return Usage::filter($this->filter)->with('team', 'agent', 'creator', 'product')->orderByDesc('id')->get();
     }
 
     public function headings(): array

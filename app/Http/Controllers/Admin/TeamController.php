@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\TeamExport;
 use App\Filters\TeamFilter;
 use App\Http\Controllers\Controller;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Unique;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TeamController extends Controller
 {
@@ -58,5 +59,10 @@ class TeamController extends Controller
     {
         TeamService::instance()->deleteTeam($id);
         return $this->success();
+    }
+
+    public function export(TeamFilter $filter)
+    {
+        return Excel::download(new TeamExport($filter), 'teams_' . date('Y_m_d_H_i') . '.xlsx');
     }
 }

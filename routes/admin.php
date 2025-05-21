@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('users/{id}/unbind2fa', [UserController::class, 'unbind2fa']);
 
     Route::resource('teams', TeamController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('teams/export', [TeamController::class, 'export']);
+
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('agents', AgentController::class)->only(['index', 'store', 'update', 'destroy']);
     // 消耗

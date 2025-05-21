@@ -20,7 +20,7 @@ class FinanceExport implements FromCollection, WithMapping, WithHeadings
      */
     public function collection()
     {
-        return Finance::filter($this->filter)->with('agent', 'product')->get();
+        return Finance::filter($this->filter)->with('agent', 'product')->orderByDesc('id')->get();
     }
 
     public function headings(): array
