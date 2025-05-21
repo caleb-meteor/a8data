@@ -117,9 +117,9 @@ class FinanceController extends Controller
         ]);
 
         $file = $request->file('file');
-        $filePath = $file->getRealPath();
+        // $filePath = $file->getRealPath();
         return $this->success([
-            'count' => FinanceService::instance()->import($filePath)
+            'count' => FinanceService::instance()->import($file)
         ]);
     }
 }

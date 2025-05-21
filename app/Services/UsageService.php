@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Constants\DepartmentEnum;
 use App\Constants\MediaEnum;
-use App\Models\Finance;
+use App\Imports\UsageImport;
 use App\Models\Team;
 use App\Models\Usage;
 use Caleb\Practice\Exceptions\PracticeAppException;
@@ -13,6 +13,8 @@ use Caleb\Practice\Service;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class UsageService extends Service
 {
@@ -52,7 +54,7 @@ class UsageService extends Service
         // 计算平均值
         foreach ($sumData as $field => $value) {
             $averageValue              = $diffDay > 0 ? $value / $diffDay : 0;
-            $result['average'][$field] = round($averageValue, 2, PHP_ROUND_HALF_UP);
+            $result['average'][$field] = round($averageValue, 6, PHP_ROUND_HALF_UP);
         }
 
         return $result;
@@ -137,13 +139,15 @@ class UsageService extends Service
      * @throws \Caleb\Practice\Exceptions\PracticeAppException
      * @author Caleb 2025/5/10
      */
-    public function import(string $filePath)
+    public function import($file)
     {
-        // 代理 产品 团队 报告人 部门 媒体
+        $data   = Excel::toArray(new UsageImport(), $file)[0] ?? [];
+        $data   = array_slice($data, 1);
         $agents = $products = $teams = $creators = $departments = $medias = [];
-
-        $importer = new ImportService(maxRows: 20000, parseRow: function ($row) use (&$agents, &$products, &$teams, &$creators, &$departments, &$medias) {
+        $rows   = [];
+        foreach ($data as $row) {
             $row                  = array_slice($row, 1);
+            $row[1]               = Date::excelToDateTimeObject($row[1])->format('Y-m-d');
             $row                  = array_map(fn($item) => trim($item), $row);
             $agents[$row[9]]      = 1;
             $products[$row[4]]    = 1;
@@ -151,10 +155,28 @@ class UsageService extends Service
             $creators[$row[17]]   = 1;
             $departments[$row[2]] = 1;
             $medias[$row[7]]      = 1;
-            return $row;
-        });
+            $rows[]               = $row;
+        }
+        if (count($rows) > 20000) {
+            throw new PracticeAppException('数据量过大，请分批导入');
+        }
+        // dd($data);
+        // 代理 产品 团队 报告人 部门 媒体
+        // $agents = $products = $teams = $creators = $departments = $medias = [];
 
-        $rows        = $importer->getRows($filePath);
+        // $importer = new ImportService(maxRows: 20000, parseRow: function ($row) use (&$agents, &$products, &$teams, &$creators, &$departments, &$medias) {
+        //     $row                  = array_slice($row, 1);
+        //     $row                  = array_map(fn($item) => trim($item), $row);
+        //     $agents[$row[9]]      = 1;
+        //     $products[$row[4]]    = 1;
+        //     $teams[$row[3]]       = 1;
+        //     $creators[$row[17]]   = 1;
+        //     $departments[$row[2]] = 1;
+        //     $medias[$row[7]]      = 1;
+        //     return $row;
+        // });
+
+        // $rows        = $importer->getRows($filePath);
         $agents      = array_filter(array_keys($agents));
         $products    = array_filter(array_keys($products));
         $teams       = array_filter(array_keys($teams));

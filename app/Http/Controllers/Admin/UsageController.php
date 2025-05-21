@@ -100,9 +100,9 @@ class UsageController extends Controller
     public function import(Request $request)
     {
         $file     = $request->file('file');
-        $filePath = $file->getRealPath();
+        // $filePath = $file->getRealPath();
         return $this->success([
-            'count' => UsageService::instance()->import($filePath)
+            'count' => UsageService::instance()->import($file)
         ]);
     }
 

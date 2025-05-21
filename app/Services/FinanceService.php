@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Constants\DepartmentEnum;
+use App\Imports\FinanceImport;
 use App\Models\Agent;
 use App\Models\Finance;
 use App\Models\Product;
@@ -12,6 +13,8 @@ use Caleb\Practice\QueryFilter;
 use Caleb\Practice\Service;
 use Illuminate\Support\Benchmark;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class FinanceService extends Service
 {
@@ -56,24 +59,41 @@ class FinanceService extends Service
     }
 
     /**
-     * @param string $filePath
+     * @param $file
      * @return int
-     * @throws \Caleb\Practice\Exceptions\PracticeAppException
+     * @throws PracticeAppException
      * @author Caleb 2025/5/10
      */
-    public function import(string $filePath)
+    public function import($file)
     {
         // 代理 产品  部门
-        $agents   = $products = $departments = [];
-        $importer = new ImportService(maxRows: 20000, parseRow: function ($row) use (&$agents, &$products, &$departments) {
+        $data = Excel::toArray(new FinanceImport(), $file)[0] ?? [];
+        $data = array_slice($data, 1);
+
+        $agents = $products = $departments = [];
+        $rows   = [];
+        foreach ($data as $row) {
             $row                   = array_slice($row, 1);
+            $row[1]                = Date::excelToDateTimeObject($row[1])->format('Y-m-d');
             $row                   = array_map(fn($item) => trim($item), $row);
             $agents[$row[11]]      = 1;
             $departments[$row[14]] = 1;
             $products[$row[17]]    = 1;
-            return $row;
-        });
-        $rows     = $importer->getRows($filePath);
+            $rows[]                = $row;
+        }
+        if (count($rows) > 20000) {
+            throw new PracticeAppException('数据量过大，请分批导入');
+        }
+
+        // $importer = new ImportService(maxRows: 20000, parseRow: function ($row) use (&$agents, &$products, &$departments) {
+        //     $row                   = array_slice($row, 1);
+        //     $row                   = array_map(fn($item) => trim($item), $row);
+        //     $agents[$row[11]]      = 1;
+        //     $departments[$row[14]] = 1;
+        //     $products[$row[17]]    = 1;
+        //     return $row;
+        // });
+        // $rows     = $importer->getRows($filePath);
 
         $agents      = array_filter(array_keys($agents));
         $products    = array_filter(array_keys($products));
@@ -119,15 +139,15 @@ class FinanceService extends Service
             foreach ($rows as $insertRow) {
                 if ($insertRow[1]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $dateTime);
             }
-            // try {
-            //     foreach (array_chunk($data, 20) as $datum) {
-            //         $datum && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $datum, separator: ',', fields: implode(',', $fields));
-            //     }
-            // } catch (\Exception $e) {
-            //     dd($datum, $e->getMessage());
-            // }
+            try {
+                foreach (array_chunk($data, 20) as $datum) {
+                    $datum && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $datum, separator: ',', fields: implode(',', $fields));
+                }
+            } catch (\Exception $e) {
+                dd($datum, $e->getMessage());
+            }
 
-            $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data,  separator: ',', fields: implode(',', $fields));
+            // $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data, separator: ',', fields: implode(',', $fields));
             return count($data);
         } else {
             $total = 0;
