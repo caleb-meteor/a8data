@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductExport;
 use App\Filters\ProductFilter;
 use App\Http\Controllers\Controller;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -59,5 +61,10 @@ class ProductController extends Controller
     {
         ProductService::instance()->deleteProduct($id);
         return $this->success();
+    }
+
+    public function export(ProductFilter $filter)
+    {
+        return Excel::download(new ProductExport($filter), 'products_' . date('Y_m_d_H_i') . '.xlsx');
     }
 }
