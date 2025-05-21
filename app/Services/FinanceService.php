@@ -179,7 +179,7 @@ class FinanceService extends Service
     {
         $date = $filter->getFilters()['date'];
 
-        $sum = Finance::filter($filter)->selectRaw('sum(counterparty_fee) as counterparty_fee, sum(media_fee) as media_fee, sum(transaction_fee) as transaction_fee,sum(service_fee) as service_fee,sum(usd) as usd,sum(ustd) as ustd')->first();
+        $sum = Finance::filter($filter)->selectRaw('sum(counterparty_fee) as counterparty_fee, sum(media_fee) as media_fee, sum(transaction_fee) as transaction_fee,sum(service_fee) as service_fee,sum(usd) as usd,sum(ustd) as ustd,sum(usd_loss_percent) as usd_loss_percent')->first();
 
         $diffDay = Carbon::create($date[0])->diffInDays($date[1]) + 1;
 

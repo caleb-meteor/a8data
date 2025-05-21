@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $name
@@ -35,6 +35,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent withoutTrashed()
  * @property-read \App\Models\User|null $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Finance> $finances
+ * @property-read int|null $finances_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Usage> $usages
+ * @property-read int|null $usages_count
  * @mixin \Eloquent
  */
 class Agent extends Model
@@ -63,5 +67,15 @@ class Agent extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id')->withTrashed();
+    }
+
+    public function usages()
+    {
+        return $this->hasMany(Usage::class);
+    }
+
+    public function finances()
+    {
+        return $this->hasMany(Finance::class);
     }
 }

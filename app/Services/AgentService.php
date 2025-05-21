@@ -46,4 +46,12 @@ class AgentService extends Service
     {
         return Agent::query()->whereIn('name', $names)->get();
     }
+
+    public function getBalance(int $agent)
+    {
+        $agent = $this->getAgent($agent);
+        $actualUsage = $agent->usages()->sum('actual_usage');
+        $amount = $agent->finances()->selectRaw('sum(counterparty_fee + media_fee + usd + ustd - transaction_fee - service_fee - usd_loss_percent) as amount')->first()?->amount ?: 0;
+        return round($amount - $actualUsage, 6);
+    }
 }

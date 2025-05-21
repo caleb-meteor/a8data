@@ -67,4 +67,11 @@ class AgentController extends Controller
     {
         return Excel::download(new AgentExport($filter), 'agents_' . date('Y_m_d_H_i') . '.xlsx');
     }
+
+    public function balance(int $id)
+    {
+        return $this->success(
+            ['balance' => AgentService::instance()->getBalance($id)]
+        );
+    }
 }
