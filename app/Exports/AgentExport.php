@@ -25,7 +25,7 @@ class AgentExport implements FromCollection, WithMapping, WithHeadings
 
     public function headings(): array
     {
-        return ['PID', '名称', '返点', '备注', '媒体'];
+        return ['PID', '名称', '返点', '备注', '媒体', '余额'];
     }
 
     public function map($row): array
@@ -37,6 +37,7 @@ class AgentExport implements FromCollection, WithMapping, WithHeadings
             $row->commission,
             $row->remark,
             $row->media ? MediaEnum::from($row->media)->getName() : '',
+            $row->balance,
         ];
     }
 }
