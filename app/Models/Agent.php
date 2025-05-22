@@ -39,6 +39,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $finances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Usage> $usages
  * @property-read int|null $usages_count
+ * @property string $balance 余额
+ * @property string|null $balance_updated_at 余额更新时间
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent whereBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agent whereBalanceUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Agent extends Model

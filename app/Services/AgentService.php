@@ -47,7 +47,7 @@ class AgentService extends Service
         return Agent::query()->whereIn('name', $names)->get();
     }
 
-    public function getBalance(int $agent)
+    public function getBalance(int|Agent $agent)
     {
         $agent = $this->getAgent($agent);
         $actualUsage = $agent->usages()->sum('actual_usage');
