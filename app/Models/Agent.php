@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -55,6 +55,8 @@ class Agent extends Model
         'remark',
         'media',
         'creator_id',
+        'balance',
+        'balance_updated_at',
     ];
 
     protected $casts = [
