@@ -141,6 +141,9 @@ class UsageService extends Service
      */
     public function import($file)
     {
+        ini_set('memory_limit', '1024M');      // 设置最大内存，例如 1024M、-1（无限制）
+        ini_set('max_execution_time', 300);   // 设置最大执行时间（秒），这里是 5 分钟
+
         $data   = Excel::toArray(new UsageImport(), $file)[0] ?? [];
         $data   = array_slice($data, 1);
         $agents = $products = $teams = $creators = $departments = $medias = [];
@@ -157,7 +160,7 @@ class UsageService extends Service
             $medias[$row[7]]      = 1;
             $rows[]               = $row;
         }
-        if (count($rows) > 20000) {
+        if (count($rows) > 50000) {
             throw new PracticeAppException('数据量过大，请分批导入');
         }
         // dd($data);

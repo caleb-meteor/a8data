@@ -66,6 +66,9 @@ class FinanceService extends Service
      */
     public function import($file)
     {
+        ini_set('memory_limit', '1024M');      // 设置最大内存，例如 1024M、-1（无限制）
+        ini_set('max_execution_time', 300);   // 设置最大执行时间（秒），这里是 5 分钟
+
         // 代理 产品  部门
         $data = Excel::toArray(new FinanceImport(), $file)[0] ?? [];
         $data = array_slice($data, 1);
@@ -81,7 +84,7 @@ class FinanceService extends Service
             $products[$row[17]]    = 1;
             $rows[]                = $row;
         }
-        if (count($rows) > 20000) {
+        if (count($rows) > 50000) {
             throw new PracticeAppException('数据量过大，请分批导入');
         }
 
@@ -123,7 +126,6 @@ class FinanceService extends Service
      */
     public function importDataToDB($rows, $agents, $products)
     {
-        set_time_limit(300);
 
         $dateTime = now()->format('Y-m-d H:i:s');
         $pdo      = DB::connection()->getPdo();
@@ -139,15 +141,15 @@ class FinanceService extends Service
             foreach ($rows as $insertRow) {
                 if ($insertRow[1]) $data[] = $this->formatRowsForPgsql($insertRow, $agents, $products, $dateTime);
             }
-            try {
-                foreach (array_chunk($data, 20) as $datum) {
-                    $datum && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $datum, separator: ',', fields: implode(',', $fields));
-                }
-            } catch (\Exception $e) {
-                dd($datum, $e->getMessage());
-            }
+            // try {
+            //     foreach (array_chunk($data, 20) as $datum) {
+            //         $datum && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $datum, separator: ',', fields: implode(',', $fields));
+            //     }
+            // } catch (\Exception $e) {
+            //     dd($datum, $e->getMessage());
+            // }
 
-            // $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data, separator: ',', fields: implode(',', $fields));
+            $data && $pdo->pgsqlCopyFromArray((new Finance())->getTable(), $data, separator: ',', fields: implode(',', $fields));
             return count($data);
         } else {
             $total = 0;
