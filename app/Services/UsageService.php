@@ -150,7 +150,7 @@ class UsageService extends Service
         $rows   = [];
         foreach ($data as $row) {
             $row                  = array_slice($row, 1);
-            $row[1]               = Date::excelToDateTimeObject($row[1])->format('Y-m-d');
+            $row[1]               = is_numeric($row[1]) ? Date::excelToDateTimeObject($row[1])->format('Y-m-d') : $row[1];
             $row                  = array_map(fn($item) => trim($item), $row);
             $agents[$row[9]]      = 1;
             $products[$row[4]]    = 1;
